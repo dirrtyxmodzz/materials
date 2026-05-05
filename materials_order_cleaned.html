@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materials Order</title>
+
+<style>
+:root {
+  --background: #eef1f4;
+  --card: #ffffff;
+  --header: #1f2937;
+  --blue: #2563eb;
+  --gray: #6b7280;
+  --light-gray: #f8fafc;
+  --border: #eeeeee;
+  --part-bg: #eef2ff;
+  --text: #222;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+}
+
+.header {
+  background: var(--header);
+  color: white;
+  padding: 18px 15px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.container {
+  padding: 14px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.tech-box {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.tech-box label {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: var(--gray);
+}
+
+.tech-box input {
+  width: 100%;
+  padding: 13px;
+  font-size: 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+}
+
+.section {
+  background: var(--card);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.section-title {
+  background: #6b7280;   /* grey */
+  color: white;          /* text white */
+  padding: 13px 15px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.item {
+  min-height: 62px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.item:last-child { border-bottom: none; }
+
+.item-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 9px;
+  object-fit: cover;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.item.checked {
+  background: #d1fae5;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.item-sub {
+  font-size: 13px;
+  color: var(--gray);
+  margin-top: 3px;
+}
+
+.right-side {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.part {
+  font-size: 13px;
+  background: var(--part-bg);
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+input[type="checkbox"] {
+  width: 28px;
+  height: 28px;
+  accent-color: var(--blue);
+}
+
+.qty {
+  width: 70px;
+  padding: 8px;
+  font-size: 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.actions {
+  padding-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  background: var(--blue);
+  color: white;
+  margin-top: 8px;
+}
+
+button:active { transform: scale(0.99); }
+
+.small-button {
+  background: var(--gray);
+}
+
+textarea {
+  width: 100%;
+  height: 210px;
+  margin-top: 12px;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  resize: vertical;
+  background: white;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Materials Order</h1>
+  <p>Tap items, enter quantities, generate message</p>
+</div>
+
+<div class="container">
+
+  <div class="tech-box">
+    <label for="tech-name">Tech Name</label>
+    <input type="text" id="tech-name" placeholder="Enter tech name">
+  </div>
+
+  <div id="app"></div>
+
+  <details class="section" open>
+    <summary class="section-title">Gloves</summary>
+
+    <div class="item">
+      <div class="item-info">
+        <div class="item-name">Small Gloves</div>
+      </div>
+      <input type="number" class="qty" id="gloves-small" placeholder="0" min="0">
+    </div>
+
+    <div class="item">
+      <div class="item-info">
+        <div class="item-name">Medium Gloves</div>
+      </div>
+      <input type="number" class="qty" id="gloves-medium" placeholder="0" min="0">
+    </div>
+
+    <div class="item">
+      <div class="item-info">
+        <div class="item-name">Large Gloves</div>
+      </div>
+      <input type="number" class="qty" id="gloves-large" placeholder="0" min="0">
+    </div>
+  </details>
+
+  <div class="actions">
+    <button onclick="generateOrder()">Generate + Copy Order</button>
+    <button class="small-button" onclick="clearAll()">Clear Checklist</button>
+    <textarea id="output" placeholder="Your order message will show here..."></textarea>
+  </div>
+
+</div>
+
+<script>
+const items = [
+  { section: "Sandpaper - Block", name: "80 Grit Block", part: "34442", full: "3M Sandpaper 80 Grit", note: "Longblock", img: "" },
+  { section: "Sandpaper - Block", name: "120 Grit Block", part: "34444", full: "3M Sandpaper 120 Grit", note: "Longblock", img: "" },
+  { section: "Sandpaper - Block", name: "180 Grit Block", part: "34446", full: "3M Sandpaper 180 Grit", note: "Longblock", img: "" },
+  { section: "Sandpaper - Block", name: "220 Grit Block", part: "34447", full: "3M Sandpaper 220 Grit", note: "Longblock", img: "" },
+  { section: "Sandpaper - Block", name: "320 Grit Block", part: "34449", full: "3M Sandpaper 320 Grit", note: "Longblock", img: "" },
+
+  { section: "Sandpaper - DA", name: "80 Grit DA", part: "31371", full: "3M Cubitron II 80+ 6in Hookit Disc", note: "6in Hookit Disc", img: "" },
+  { section: "Sandpaper - DA", name: "120 Grit DA", part: "", full: "3M 120 Grit 6in DA Disc", note: "6in Hookit Disc", img: "" },
+  { section: "Sandpaper - DA", name: "180 Grit DA", part: "31374", full: "3M Cubitron II 180+ 6in Hookit Disc", note: "6in Hookit Disc", img: "" },
+  { section: "Sandpaper - DA", name: "320 Grit DA", part: "31483", full: "3M Cubitron II 320+ 6in Hookit Disc", note: "6in Hookit Disc", img: "" },
+
+  { section: "Sandpaper - Mini DA", name: "180 Grit Mini DA", part: "31364", full: "3M Cubitron II 3in 180+ Hookit Disc", note: "3in Hookit Disc", img: "" },
+  { section: "Sandpaper - Mini DA", name: "320 Grit Mini DA", part: "31463", full: "3M Cubitron II 3in 320+ Hookit Disc", note: "3in Hookit Disc", img: "" },
+
+  { section: "Fillers / Prep", name: "Glaze", part: "31180", full: "3M Platinum Plus Glaze", note: "Filler / prep", img: "" },
+  { section: "Fillers / Prep", name: "Burrito (White)", part: "08369", full: "Burrito White", note: "", img: "" },
+  { section: "Fillers / Prep", name: "Adhesive Promoter", part: "06396", full: "3M Adhesive Promoter", note: "Prep", img: "" },
+
+  { section: "Adhesives / Sealers", name: "Bare Metal Seam Sealer", part: "08310", full: "3M Bare-Metal Seam Sealer Beige", note: "Beige", img: "" },
+  { section: "Adhesives / Sealers", name: "Panel Bond (Black)", part: "08115", full: "3M Panel Bonding Adhesive", note: "Adhesive", img: "" },
+  { section: "Adhesives / Sealers", name: "Structural Adhesive (Purple)", part: "07333", full: "3M Structural Adhesive", note: "Adhesive", img: "" },
+  { section: "Adhesives / Sealers", name: "4747 (Glue)", part: "04747", full: "3M Seam Sealer Glue", note: "Glue", img: "" },
+
+  { section: "Consumables", name: "File Belt 36+", part: "33443", full: "3M Cubitron II File Belt 36+ (1/2 x 18)", note: "File belt", img: "" },
+  { section: "Consumables", name: "Belt Sander 60 Grit", part: "33445", full: "3M Belt Sander 60 Grit", note: "Sanding belt", img: "" },
+  { section: "Consumables", name: "Belt Sander 80 Grit", part: "33446", full: "3M Belt Sander 80 Grit", note: "Sanding belt", img: "" },
+  { section: "Consumables", name: "Purple Wheels", part: "21552", full: "3M Purple Clean & Strip Wheels", note: "Clean and strip", img: "" },
+  { section: "Consumables", name: "Green Corp Wheels", part: "", full: "3M Green Corp Wheels", note: "", img: "" },
+  { section: "Consumables", name: "Scotch-Brite Wheels", part: "", full: "3M Scotch-Brite Wheels", note: "", img: "" },
+  { section: "Consumables", name: "Cutoff Wheel Thin", part: "34455", full: "Cutoff Wheel Thin", note: "Cutting wheel", img: "" },
+  { section: "Consumables", name: "Cutoff Wheel Thick (Welds)", part: "", full: "Cutoff Wheel Thick", note: "Weld grinding", img: "" },
+  { section: "Consumables", name: "Welding Paper", part: "05916", full: "Welding & Spark Deflection Paper", note: "Spark protection", img: "" },
+  { section: "Consumables", name: "Scotch-Brite Pad", part: "64926", full: "3M Scotch-Brite Pad", note: "", img: "" },
+
+  { section: "Coatings", name: "Weld-Thru Primer", part: "05917", full: "3M Weld-Thru Coating II", note: "12.75 oz aerosol", img: "https://multimedia.3m.com/mws/media/1067395J/3m-weld-thru-coating-ii-05917-12-75-oz-net-wt-361-g.jpg?width=506" },
+  { section: "Coatings", name: "Cavity Wax", part: "08852", full: "3M Cavity Wax Plus", note: "", img: "" },
+  { section: "Coatings", name: "Quick Check", part: "", full: "Quick Check", note: "", img: "" },
+
+  { section: "PPE", name: "Mask", part: "", full: "Respirator Mask", note: "", img: "" }
+];
+
+function buildApp() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  const sections = {};
+
+  items.forEach(item => {
+    if (!sections[item.section]) sections[item.section] = [];
+    sections[item.section].push(item);
+  });
+
+  Object.keys(sections).forEach(sectionName => {
+    const section = document.createElement("div");
+section.className = "section";
+
+const title = document.createElement("div");
+title.className = "section-title";
+title.textContent = sectionName;
+section.appendChild(title);
+
+    sections[sectionName].forEach(item => {
+      const row = document.createElement("div");
+      row.className = "item";
+
+      if (item.img) {
+        const img = document.createElement("img");
+        img.className = "item-img";
+        img.src = item.img;
+        img.alt = item.name;
+        row.appendChild(img);
+      }
+
+      const info = document.createElement("div");
+      info.className = "item-info";
+
+      const name = document.createElement("div");
+      name.className = "item-name";
+      name.textContent = item.name;
+
+      const note = document.createElement("div");
+      note.className = "item-sub";
+      note.textContent = item.note || "";
+
+      info.appendChild(name);
+      if (item.note) info.appendChild(note);
+
+      const right = document.createElement("div");
+      right.className = "right-side";
+
+      if (item.part) {
+        const part = document.createElement("span");
+        part.className = "part";
+        part.textContent = item.part;
+        right.appendChild(part);
+      }
+
+      const check = document.createElement("input");
+      check.type = "checkbox";
+      check.dataset.full = item.full;
+      check.dataset.part = item.part || "";
+
+      check.addEventListener("change", () => {
+      if (check.checked) {
+      row.classList.add("checked");
+      } else {
+      row.classList.remove("checked");
+  }
+});      
+
+
+      right.appendChild(check);
+
+      row.appendChild(info);
+      row.appendChild(right);
+      section.appendChild(row);
+    });
+
+    app.appendChild(section);
+  });
+}
+
+function generateOrder() {
+  const techName = document.getElementById("tech-name").value.trim();
+
+  let output = "Weekly Material Order:\n";
+  if (techName) output += "Tech: " + techName + "\n";
+  output += "\n";
+
+  let count = 0;
+
+  document.querySelectorAll("input[type=checkbox]").forEach(cb => {
+    if (cb.checked) {
+      const full = cb.dataset.full;
+      const part = cb.dataset.part;
+      output += "- " + full + (part ? " (Part #" + part + ")" : "") + "\n";
+      count++;
+    }
+  });
+
+  const small = document.getElementById("gloves-small").value;
+  const medium = document.getElementById("gloves-medium").value;
+  const large = document.getElementById("gloves-large").value;
+
+  if (small > 0) {
+    output += "- Gloves Small (Qty: " + small + " box" + (small > 1 ? "es" : "") + ")\n";
+    count++;
+  }
+
+  if (medium > 0) {
+    output += "- Gloves Medium (Qty: " + medium + " box" + (medium > 1 ? "es" : "") + ")\n";
+    count++;
+  }
+
+  if (large > 0) {
+    output += "- Gloves Large (Qty: " + large + " box" + (large > 1 ? "es" : "") + ")\n";
+    count++;
+  }
+
+  if (count === 0) output += "(No items selected)";
+
+  const box = document.getElementById("output");
+  box.style.display = "block";
+  box.value = output;
+  box.scrollIntoView({ behavior: "smooth" });
+
+  navigator.clipboard.writeText(output).then(() => {
+    alert("Order copied");
+  }).catch(() => {
+    alert("Order generated. Copy it from the box.");
+  });
+}
+
+function clearAll() {
+  document.querySelectorAll("input[type=checkbox]").forEach(cb => cb.checked = false);
+
+  document.getElementById("gloves-small").value = "";
+  document.getElementById("gloves-medium").value = "";
+  document.getElementById("gloves-large").value = "";
+
+  const box = document.getElementById("output");
+  box.value = "";
+  box.style.display = "none";
+}
+
+buildApp();
+</script>
+
+</body>
+</html>
