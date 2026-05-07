@@ -8,25 +8,27 @@ const items = [
   { section: "Sandpaper", name: "320 Grit Block", part: "34449", full: "3M Sandpaper 320 Grit", link: "" },
 
   // 🪵 Sandpaper (Orbital / DA)
-  { section: "Sandpaper", name: "80 Grit DA", part: "31371", full: "3M Cubitron II 80+ 6in Hookit Disc", link: "" },
-  { section: "Sandpaper", name: "120 Grit DA", part: "", full: "3M 120 Grit 6in DA Disc", link: "" },
-  { section: "Sandpaper", name: "180 Grit DA", part: "31374", full: "3M Cubitron II 180+ 6in Hookit Disc", link: "" },
-  { section: "Sandpaper", name: "320 Grit DA", part: "31483", full: "3M Cubitron II 320+ 6in Hookit Disc", link: "" },
+  { section: "Sandpaper", name: "80 Grit DA", part: "31371", full: "3M 80+ 6in Hookit Disc", link: "" },
+  { section: "Sandpaper", name: "120 Grit DA", part: "", full: "3M 120+ 6in Hookit Disc", link: "" },
+  { section: "Sandpaper", name: "180 Grit DA", part: "31374", full: "3M 180+ 6in Hookit Disc", link: "" },
+  { section: "Sandpaper", name: "320 Grit DA", part: "31483", full: "3M 320+ 6in Hookit Disc", link: "" },
 
   // 🪵 Sandpaper (Mini DA)
-  { section: "Sandpaper", name: "180 Grit Mini DA", part: "31364", full: "3M Cubitron II 3in 180+ Hookit Disc", link: "" },
-  { section: "Sandpaper", name: "320 Grit Mini DA", part: "31463", full: "3M Cubitron II 3in 320+ Hookit Disc", link: "" },
+  { section: "Sandpaper", name: "180 Grit Mini DA", part: "31364", full: "3M 3in 180+ Hookit Disc", link: "" },
+  { section: "Sandpaper", name: "320 Grit Mini DA", part: "31463", full: "3M 3in 320+ Hookit Disc", link: "" },
 
-  // 🧪 Fillers / Prep
-  { section: "Fillers / Prep", name: "Glaze", part: "31180", full: "3M Platinum Plus Glaze", link: "" },
-  { section: "Fillers / Prep", name: "Burrito (White)", part: "08369", full: "Burrito White", link: "" },
-  { section: "Fillers / Prep", name: "Adhesive Promoter", part: "06396", full: "3M Adhesive Promoter", link: "" },
-
+  // 🧪 Fillers
+  { section: "Fillers / Prep", name: "Platinum™ Plus Glaze", part: "31180", full: "3M Platinum Plus Glaze", link: "" },
+  { section: "Fillers / Prep", name: "Body filler (Bondo)", part: "05800", full: "3M™ Lightweight Body Filler", link: "" },
+  
   // 🧷 Adhesives / Sealers
   { section: "Adhesives / Sealers", name: "Bare Metal Seam Sealer", part: "08310", full: "3M Bare-Metal Seam Sealer Beige", link: "" },
   { section: "Adhesives / Sealers", name: "Panel Bond (Black)", part: "08115", full: "3M Panel Bonding Adhesive", link: "" },
   { section: "Adhesives / Sealers", name: "Structural Adhesive (Purple)", part: "07333", full: "3M Structural Adhesive", link: "" },
   { section: "Adhesives / Sealers", name: "4747 (Glue)", part: "04747", full: "3M Seam Sealer Glue", link: "" },
+  { section: "Adhesives / Sealers", name: "Burrito (White)", part: "08369", full: "Burrito White", link: "" },
+  { section: "Adhesives / Sealers", name: "Adhesive Promoter", part: "06396", full: "3M Adhesive Promoter", link: "" },
+
 
   // 🛠 Consumables
   { section: "Consumables", name: "File Belt 36+", part: "33443", full: "3M Cubitron II File Belt 36+ (1/2 x 18)", link: "" },
