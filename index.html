@@ -21,14 +21,21 @@ body { font-family: Arial, sans-serif; margin: 0; background: var(--background);
 .header p { margin: 5px 0 0; font-size: 14px; color: #cbd5e1; }
 .container { padding: 14px; max-width: 800px; margin: auto; }
 .tech-box, .section { background: var(--card); border-radius: 14px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
-.tech-box { padding: 14px; }
+.tech-box { padding: 0; }
+.tech-box-title { background: #6b7280; color: white; padding: 13px 15px; font-weight: 700; font-size: 18px; }
+.tech-box-inner { padding: 14px; }
 .tech-box label { display: block; font-size: 15px; margin-bottom: 8px; color: var(--gray); }
 .tech-box input { width: 100%; padding: 13px; font-size: 18px; border: 1px solid #d1d5db; border-radius: 10px; }
 .section-title { background: #6b7280; color: white; padding: 13px 15px; font-weight: 700; font-size: 18px; }
 .item { min-height: 62px; padding: 15px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border); }
 .item:last-child { border-bottom: none; }
 .item.checked { background: #d1fae5; }
-.item-img { width: 52px; height: 52px; border-radius: 9px; object-fit: cover; background: #e5e7eb; flex-shrink: 0; }
+.item-img { width: 52px; height: 52px; border-radius: 9px; object-fit: cover; background: #e5e7eb; flex-shrink: 0; cursor: zoom-in; }
+
+/* Lightbox */
+#lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; align-items: center; justify-content: center; }
+#lightbox.active { display: flex; }
+#lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.5); object-fit: contain; }
 .item-info { flex: 1; min-width: 0; }
 .item-name { font-size: 18px; font-weight: 600; }
 .item-sub { font-size: 13px; color: var(--gray); margin-top: 3px; }
@@ -36,11 +43,15 @@ body { font-family: Arial, sans-serif; margin: 0; background: var(--background);
 .part { font-size: 13px; background: var(--part-bg); color: #374151; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
 input[type="checkbox"] { width: 28px; height: 28px; accent-color: var(--blue); }
 .qty { width: 70px; padding: 8px; font-size: 18px; border: 1px solid #d1d5db; border-radius: 8px; text-align: center; }
+.item-qty { width: 60px; padding: 6px 4px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 8px; text-align: center; display: none; background: white; }
+.item.checked .item-qty { display: inline-block; }
 .actions { padding-bottom: 20px; }
-button { width: 100%; padding: 16px; font-size: 18px; font-weight: bold; border: none; border-radius: 12px; background: var(--blue); color: white; margin-top: 8px; }
+
+/* FIX 3: cursor: pointer on buttons */
+button { width: 100%; padding: 16px; font-size: 18px; font-weight: bold; border: none; border-radius: 12px; background: var(--blue); color: white; margin-top: 8px; cursor: pointer; }
 button:active { transform: scale(0.99); }
 .small-button { background: var(--gray); }
-textarea { width: 100%; height: 120px; margin-top: 12px; padding: 12px; font-size: 16px; border-radius: 12px; border: 1px solid #d1d5db; resize: vertical; background: white; display: none; }
+textarea { width: 100%; height: 200px; margin-top: 12px; padding: 12px; font-size: 16px; border-radius: 12px; border: 1px solid #d1d5db; resize: vertical; background: white; display: none; }
 </style>
 </head>
 <body>
@@ -50,8 +61,10 @@ textarea { width: 100%; height: 120px; margin-top: 12px; padding: 12px; font-siz
 </div>
 <div class="container">
   <div class="tech-box">
-    <label for="tech-name">Tech Name</label>
-    <input type="text" id="tech-name" placeholder="Enter tech name">
+    <div class="tech-box-title">Tech Name</div>
+    <div class="tech-box-inner">
+      <input type="text" id="tech-name" placeholder="Enter tech name">
+    </div>
   </div>
 
   <div id="app"></div>
@@ -70,44 +83,23 @@ textarea { width: 100%; height: 120px; margin-top: 12px; padding: 12px; font-siz
   </div>
 </div>
 
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="inventory.js"></script>
+
 <script>
-const items = [
-  { section: "Sandpaper - Block", name: "80 Grit Block", part: "34442", full: "3M Sandpaper 80 Grit", note: "Longblock", img: "" },
-  { section: "Sandpaper - Block", name: "120 Grit Block", part: "34444", full: "3M Sandpaper 120 Grit", note: "Longblock", img: "" },
-  { section: "Sandpaper - Block", name: "180 Grit Block", part: "34446", full: "3M Sandpaper 180 Grit", note: "Longblock", img: "" },
-  { section: "Sandpaper - Block", name: "220 Grit Block", part: "34447", full: "3M Sandpaper 220 Grit", note: "Longblock", img: "" },
-  { section: "Sandpaper - Block", name: "320 Grit Block", part: "34449", full: "3M Sandpaper 320 Grit", note: "Longblock", img: "" },
-  { section: "Sandpaper - DA", name: "80 Grit DA", part: "31371", full: "3M Cubitron II 80+ 6in Hookit Disc", note: "6in Hookit Disc", img: "" },
-  { section: "Sandpaper - DA", name: "120 Grit DA", part: "", full: "3M 120 Grit 6in DA Disc", note: "6in Hookit Disc", img: "" },
-  { section: "Sandpaper - DA", name: "180 Grit DA", part: "31374", full: "3M Cubitron II 180+ 6in Hookit Disc", note: "6in Hookit Disc", img: "" },
-  { section: "Sandpaper - DA", name: "320 Grit DA", part: "31483", full: "3M Cubitron II 320+ 6in Hookit Disc", note: "6in Hookit Disc", img: "" },
-  { section: "Sandpaper - Mini DA", name: "180 Grit Mini DA", part: "31364", full: "3M Cubitron II 3in 180+ Hookit Disc", note: "3in Hookit Disc", img: "" },
-  { section: "Sandpaper - Mini DA", name: "320 Grit Mini DA", part: "31463", full: "3M Cubitron II 3in 320+ Hookit Disc", note: "3in Hookit Disc", img: "" },
-  { section: "Fillers / Prep", name: "Glaze", part: "31180", full: "3M Platinum Plus Glaze", note: "Filler / prep", img: "" },
-  { section: "Fillers / Prep", name: "Burrito (White)", part: "08369", full: "Burrito White", note: "", img: "" },
-  { section: "Fillers / Prep", name: "Adhesive Promoter", part: "06396", full: "3M Adhesive Promoter", note: "Prep", img: "" },
-  { section: "Adhesives / Sealers", name: "Bare Metal Seam Sealer", part: "08310", full: "3M Bare-Metal Seam Sealer Beige", note: "Beige", img: "" },
-  { section: "Adhesives / Sealers", name: "Panel Bond (Black)", part: "08115", full: "3M Panel Bonding Adhesive", note: "Adhesive", img: "" },
-  { section: "Adhesives / Sealers", name: "Structural Adhesive (Purple)", part: "07333", full: "3M Structural Adhesive", note: "Adhesive", img: "" },
-  { section: "Adhesives / Sealers", name: "4747 (Glue)", part: "04747", full: "3M Seam Sealer Glue", note: "Glue", img: "" },
-  { section: "Consumables", name: "File Belt 36+", part: "33443", full: "3M Cubitron II File Belt 36+ (1/2 x 18)", note: "File belt", img: "" },
-  { section: "Consumables", name: "Belt Sander 60 Grit", part: "33445", full: "3M Belt Sander 60 Grit", note: "Sanding belt", img: "" },
-  { section: "Consumables", name: "Belt Sander 80 Grit", part: "33446", full: "3M Belt Sander 80 Grit", note: "Sanding belt", img: "" },
-  { section: "Consumables", name: "Purple Wheels", part: "21552", full: "3M Purple Clean & Strip Wheels", note: "Clean and strip", img: "" },
-  { section: "Consumables", name: "Green Corp Wheels", part: "", full: "3M Green Corp Wheels", note: "", img: "" },
-  { section: "Consumables", name: "Scotch-Brite Wheels", part: "", full: "3M Scotch-Brite Wheels", note: "", img: "" },
-  { section: "Consumables", name: "Cutoff Wheel Thin", part: "34455", full: "Cutoff Wheel Thin", note: "Cutting wheel", img: "" },
-  { section: "Consumables", name: "Cutoff Wheel Thick (Welds)", part: "", full: "Cutoff Wheel Thick", note: "Weld grinding", img: "" },
-  { section: "Consumables", name: "Welding Paper", part: "05916", full: "Welding & Spark Deflection Paper", note: "Spark protection", img: "" },
-  { section: "Consumables", name: "Scotch-Brite Pad", part: "64926", full: "3M Scotch-Brite Pad", note: "", img: "" },
-  { section: "Coatings", name: "Weld-Thru Primer", part: "05917", full: "3M Weld-Thru Coating II", note: "12.75 oz aerosol", img: "https://multimedia.3m.com/mws/media/1067395J/3m-weld-thru-coating-ii-05917-12-75-oz-net-wt-361-g.jpg?width=506" },
-  { section: "Coatings", name: "Cavity Wax", part: "08852", full: "3M Cavity Wax Plus", note: "", img: "" },
-  { section: "Coatings", name: "Quick Check", part: "", full: "Quick Check", note: "", img: "" },
-  { section: "PPE", name: "Mask", part: "", full: "Respirator Mask", note: "", img: "" }
-];
 
 function buildApp() {
   const app = document.getElementById("app");
+
+  // FIX 4: Guard against missing or broken inventory.js
+  if (typeof items === "undefined") {
+    app.innerHTML = "<p style='padding: 16px; color: red;'>Error: inventory.js failed to load. Please check the file and refresh.</p>";
+    return;
+  }
+
   app.innerHTML = "";
   const sections = {};
 
@@ -134,6 +126,7 @@ function buildApp() {
         img.className = "item-img";
         img.src = item.img;
         img.alt = item.name;
+        img.addEventListener("click", () => openLightbox(item.img));
         row.appendChild(img);
       }
 
@@ -161,6 +154,12 @@ function buildApp() {
         right.appendChild(part);
       }
 
+      const qtyInput = document.createElement("input");
+      qtyInput.type = "number";
+      qtyInput.className = "item-qty";
+      qtyInput.value = 1;
+      qtyInput.min = 1;
+
       const check = document.createElement("input");
       check.type = "checkbox";
       check.dataset.full = item.full;
@@ -169,11 +168,14 @@ function buildApp() {
       check.addEventListener("change", () => {
         if (check.checked) {
           row.classList.add("checked");
+          qtyInput.value = 1;
         } else {
           row.classList.remove("checked");
+          qtyInput.value = 1;
         }
       });
 
+      right.appendChild(qtyInput);
       right.appendChild(check);
       row.appendChild(info);
       row.appendChild(right);
@@ -194,28 +196,37 @@ function generateOrder() {
 
   const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSeZ6C9ITHWZDDf1C4yvKdx4RvMIVaRZc1xOwbQLm-nuYDMikg/formResponse";
   let submitted = 0;
+  const orderLines = [];
 
-  document.querySelectorAll("#app input[type=checkbox]").forEach(cb => {
+  document.querySelectorAll("input[type=checkbox]").forEach(cb => {
     if (cb.checked) {
-      submitItem(formURL, techName, cb.dataset.full, cb.dataset.part || "", 1, "");
+      const row = cb.closest(".item");
+      const qtyEl = row ? row.querySelector(".item-qty") : null;
+      const qty = qtyEl ? (parseInt(qtyEl.value) || 1) : 1;
+      const label = row ? row.querySelector(".item-name")?.textContent : cb.dataset.full;
+      submitItem(formURL, techName, cb.dataset.full, cb.dataset.part || "", qty);
+      orderLines.push("  x" + qty + "  " + (label || cb.dataset.full));
       submitted++;
     }
   });
 
-  const small = document.getElementById("gloves-small").value;
-  const medium = document.getElementById("gloves-medium").value;
-  const large = document.getElementById("gloves-large").value;
+  const small = parseInt(document.getElementById("gloves-small").value) || 0;
+  const medium = parseInt(document.getElementById("gloves-medium").value) || 0;
+  const large = parseInt(document.getElementById("gloves-large").value) || 0;
 
   if (small > 0) {
-    submitItem(formURL, techName, "Gloves Small", "", small, "");
+    submitItem(formURL, techName, "Gloves Small", "", small);
+    orderLines.push("  x" + small + "  Small Gloves");
     submitted++;
   }
   if (medium > 0) {
-    submitItem(formURL, techName, "Gloves Medium", "", medium, "");
+    submitItem(formURL, techName, "Gloves Medium", "", medium);
+    orderLines.push("  x" + medium + "  Medium Gloves");
     submitted++;
   }
   if (large > 0) {
-    submitItem(formURL, techName, "Gloves Large", "", large, "");
+    submitItem(formURL, techName, "Gloves Large", "", large);
+    orderLines.push("  x" + large + "  Large Gloves");
     submitted++;
   }
 
@@ -226,21 +237,25 @@ function generateOrder() {
 
   const box = document.getElementById("output");
   box.style.display = "block";
-  box.value = "Order sent successfully.\\nItems submitted: " + submitted;
+  box.value = "\u2705 Order sent for: " + techName + "\n"
+    + "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n"
+    + orderLines.join("\n") + "\n"
+    + "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n"
+    + "Total items: " + submitted;
   box.scrollIntoView({ behavior: "smooth" });
 
   alert("Order sent ✅");
   clearSelectionsOnly();
 }
 
-function submitItem(formURL, tech, item, part, qty, notes) {
+// FIX 2: Removed unused 'notes' parameter
+function submitItem(formURL, tech, item, part, qty) {
   const url =
     formURL +
     "?entry.254628996=" + encodeURIComponent(tech) +
     "&entry.190302432=" + encodeURIComponent(item) +
     "&entry.1471479967=" + encodeURIComponent(part) +
-    "&entry.1785444832=" + encodeURIComponent(qty) +
-    "&entry.1195028313=" + encodeURIComponent(notes);
+    "&entry.1785444832=" + encodeURIComponent(qty);
 
   fetch(url, { method: "POST", mode: "no-cors" });
 }
@@ -248,6 +263,7 @@ function submitItem(formURL, tech, item, part, qty, notes) {
 function clearSelectionsOnly() {
   document.querySelectorAll("input[type=checkbox]").forEach(cb => cb.checked = false);
   document.querySelectorAll(".item.checked").forEach(row => row.classList.remove("checked"));
+  document.querySelectorAll(".item-qty").forEach(el => el.value = 1);
   document.getElementById("gloves-small").value = "";
   document.getElementById("gloves-medium").value = "";
   document.getElementById("gloves-large").value = "";
@@ -258,6 +274,16 @@ function clearAll() {
   const box = document.getElementById("output");
   box.value = "";
   box.style.display = "none";
+}
+
+function openLightbox(src) {
+  document.getElementById("lightbox-img").src = src;
+  document.getElementById("lightbox").classList.add("active");
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("active");
+  document.getElementById("lightbox-img").src = "";
 }
 
 buildApp();
